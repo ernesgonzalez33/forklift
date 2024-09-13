@@ -1,0 +1,26 @@
+FROM quay.io/operator-framework/ansible-operator:main
+
+USER root
+# RUN dnf -y update && dnf clean all
+# RUN rm -rf /var/cache/yum /var/cache/dnf
+# Trying to overcome the bug within OCP4.15 and k8s collections (https://issues.redhat.com/browse/MTV-947)
+# RUN sed -i "s/resource, name = subresource\['name'\]\.split('\/')/resource, name = subresource['name']\.split('\/', 1)/" /usr/lib/python3.6/site-packages/kubernetes/dynamic/discovery.py
+# RUN sed -i "s/resource, name = subresource\['name'\]\.split('\/')/resource, name = subresource['name']\.split('\/', 1)/" /usr/lib/python3.6/site-packages/openshift/dynamic/discovery.py
+
+USER 1001
+COPY watches.yaml watches.yaml
+COPY roles roles
+
+# LABEL \
+#         com.redhat.component="mtv-operator-container" \
+#         version="$CI_VERSION" \
+#         name="migration-toolkit-virtualization/mtv-rhel8-operator" \
+#         license="Apache License 2.0" \
+#         io.k8s.display-name="Migration Toolkit for Virtualization" \
+#         io.k8s.description="Migration Toolkit for Virtualization - Operator" \
+#         io.openshift.tags="migration,mtv,forklift" \
+#         io.openshift.build.commit.id="${CI_FORKLIFT_UPSTREAM_COMMIT}" \
+#         io.openshift.build.source-location="${CI_FORKLIFT_UPSTREAM_URL}" \
+#         io.openshift.build.commit.url="https://github.com/kubev2v/forklift/commit/${CI_FORKLIFT_UPSTREAM_COMMIT}" \
+#         summary="Migration Toolkit for Virtualization - Operator" \
+#         maintainer="Migration Toolkit for Virtualization Team <migtoolkit-virt@redhat.com>"
